@@ -1,0 +1,35 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "com.ggfood.test.ggfood_api"
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    dependencies {
+        compile group: 'cz.msebera.android', name: 'httpclient', version: '4.4.1.1'
+    }
+    compile 'com.journeyapps:zxing-android-embedded:3.5.0'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:design:25.3.1'
+    compile 'ai.api:libai:1.2.2'
+    compile 'ai.api:sdk:2.0.1@aar'
+    compile 'com.mcxiaoke.volley:library-aar:1.0.0'
+    testCompile 'junit:junit:4.12'
+}

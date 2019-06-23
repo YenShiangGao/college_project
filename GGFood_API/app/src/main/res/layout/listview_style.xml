@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <com.ggfood.test.ggfood_api.tool.WebImageView
+        android:id="@+id/webview_image"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_weight="0.00"
+        android:background="@drawable/shadow"
+        android:scaleType="fitXY"></com.ggfood.test.ggfood_api.tool.WebImageView>
+
+    <TextView
+        android:id="@+id/textview_name"
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:textAlignment="inherit"
+        android:textSize="18sp" />
+</LinearLayout>

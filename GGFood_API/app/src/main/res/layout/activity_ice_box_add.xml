@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/actionbar"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <Button
+            android:id="@+id/back"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="13dp"
+            android:background="@android:drawable/ic_menu_revert" />
+
+        <Button
+            android:id="@+id/qr_scan"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/back"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/qr_icon" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/actionbar"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="編號" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/ID"
+            android:text="名稱" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/recommend_name"
+            android:text="數量" />
+
+        <EditText
+            android:id="@+id/quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView3"
+            android:ems="2"
+            android:gravity="center"
+            android:inputType="numberDecimal"
+            android:text="1" />
+
+        <Button
+            android:id="@+id/submit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="確認"
+            android:layout_below="@+id/pick_time"
+            android:layout_alignParentEnd="true" />
+
+        <EditText
+            android:id="@+id/recommend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView2"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/deadline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/quantity"
+            android:layout_alignBottom="@+id/quantity"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/quantity"
+            android:ems="5"
+            android:hint="2017/12/31"
+            android:inputType="date" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/deadline"
+            android:layout_below="@+id/recommend_name"
+            android:text="有效期限" />
+
+        <EditText
+            android:id="@+id/ID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/textView"
+            android:ems="8"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/pick_time"
+            android:layout_width="45dp"
+            android:layout_height="50dp"
+            android:layout_alignBottom="@+id/deadline"
+            android:layout_alignTop="@+id/deadline"
+            android:layout_marginStart="5dp"
+            android:layout_toEndOf="@+id/deadline"
+            android:background="@android:drawable/ic_menu_my_calendar" />
+    </RelativeLayout>
+
+    　
+
+</RelativeLayout>

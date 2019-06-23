@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#FFB6C1</color>
+    <color name="colorPrimaryDark">#bf8890</color>
+    <color name="colorAccent">#ff0400</color>
+    <color name="separate_line">#525d66</color>
+    <color name="textColor">#1c6115</color>
+    <color name="bar_pink">#FFB6C1</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="brown">#FF6D5656</color>
+    <color name="light_orange">#ffecaf</color>
+</resources>

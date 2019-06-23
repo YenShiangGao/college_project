@@ -1,0 +1,631 @@
+<html>
+<head>
+<title>MainActivity.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.ln { color: #999999; font-weight: normal; font-style: normal; }
+.s0 { color: rgb(0,0,128); font-weight: bold; }
+.s1 { color: rgb(0,0,0); }
+.s2 { color: rgb(0,128,0); font-weight: bold; }
+.s3 { color: rgb(28,201,51); font-weight: bold; font-style: italic; }
+.s4 { color: rgb(0,0,255); }
+</style>
+</head>
+<BODY BGCOLOR="#ffffff">
+<TABLE CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#c0c0c0" >
+<TR><TD><CENTER>
+<FONT FACE="Arial, Helvetica" COLOR="#000000">
+MainActivity.java</FONT>
+</center></TD></TR></TABLE>
+<pre>
+<span class="s0">package </span><span class="s1">com.ggfood.test.ggfood_api; 
+ 
+</span><span class="s0">import </span><span class="s1">android.Manifest; 
+</span><span class="s0">import </span><span class="s1">android.app.Fragment; 
+</span><span class="s0">import </span><span class="s1">android.app.FragmentManager; 
+</span><span class="s0">import </span><span class="s1">android.app.FragmentTransaction; 
+</span><span class="s0">import </span><span class="s1">android.content.ComponentName; 
+</span><span class="s0">import </span><span class="s1">android.content.Context; 
+</span><span class="s0">import </span><span class="s1">android.content.Intent; 
+</span><span class="s0">import </span><span class="s1">android.content.ServiceConnection; 
+</span><span class="s0">import </span><span class="s1">android.content.SharedPreferences; 
+</span><span class="s0">import </span><span class="s1">android.content.pm.PackageManager; 
+</span><span class="s0">import </span><span class="s1">android.database.Cursor; 
+</span><span class="s0">import </span><span class="s1">android.database.sqlite.SQLiteDatabase; 
+</span><span class="s0">import </span><span class="s1">android.os.Build; 
+</span><span class="s0">import </span><span class="s1">android.os.Bundle; 
+</span><span class="s0">import </span><span class="s1">android.os.IBinder; 
+</span><span class="s0">import </span><span class="s1">android.support.annotation.NonNull; 
+</span><span class="s0">import </span><span class="s1">android.support.design.widget.NavigationView; 
+</span><span class="s0">import </span><span class="s1">android.support.v4.app.ActivityCompat; 
+</span><span class="s0">import </span><span class="s1">android.support.v4.content.ContextCompat; 
+</span><span class="s0">import </span><span class="s1">android.support.v4.widget.DrawerLayout; 
+</span><span class="s0">import </span><span class="s1">android.support.v7.app.AppCompatActivity; 
+</span><span class="s0">import </span><span class="s1">android.util.Log; 
+</span><span class="s0">import </span><span class="s1">android.view.Gravity; 
+</span><span class="s0">import </span><span class="s1">android.view.MenuItem; 
+</span><span class="s0">import </span><span class="s1">android.view.View; 
+</span><span class="s0">import </span><span class="s1">android.widget.Button; 
+</span><span class="s0">import </span><span class="s1">android.widget.ImageButton; 
+</span><span class="s0">import </span><span class="s1">android.widget.ImageView; 
+</span><span class="s0">import </span><span class="s1">android.widget.TextView; 
+</span><span class="s0">import </span><span class="s1">android.widget.Toast; 
+ 
+</span><span class="s0">import </span><span class="s1">com.ggfood.test.ggfood_api.fragment.History; 
+</span><span class="s0">import </span><span class="s1">com.ggfood.test.ggfood_api.fragment.HomePage; 
+</span><span class="s0">import </span><span class="s1">com.ggfood.test.ggfood_api.fragment.IceBox; 
+</span><span class="s0">import </span><span class="s1">com.ggfood.test.ggfood_api.fragment.Order; 
+</span><span class="s0">import </span><span class="s1">com.ggfood.test.ggfood_api.fragment.Personal; 
+</span><span class="s0">import </span><span class="s1">com.ggfood.test.ggfood_api.fragment.Recommend; 
+</span><span class="s0">import </span><span class="s1">com.ggfood.test.ggfood_api.fragment.Settings; 
+</span><span class="s0">import </span><span class="s1">com.ggfood.test.ggfood_api.tool.AsyncHttpSender; 
+</span><span class="s0">import </span><span class="s1">com.google.gson.JsonElement; 
+ 
+</span><span class="s0">import </span><span class="s1">org.json.JSONArray; 
+</span><span class="s0">import </span><span class="s1">org.json.JSONException; 
+</span><span class="s0">import </span><span class="s1">org.json.JSONObject; 
+ 
+</span><span class="s0">import </span><span class="s1">java.io.BufferedReader; 
+</span><span class="s0">import </span><span class="s1">java.io.IOException; 
+</span><span class="s0">import </span><span class="s1">java.io.InputStream; 
+</span><span class="s0">import </span><span class="s1">java.io.InputStreamReader; 
+</span><span class="s0">import </span><span class="s1">java.util.ArrayList; 
+</span><span class="s0">import </span><span class="s1">java.util.HashMap; 
+</span><span class="s0">import </span><span class="s1">java.util.List; 
+</span><span class="s0">import </span><span class="s1">java.util.Map; 
+ 
+</span><span class="s0">import </span><span class="s1">ai.api.model.AIOutputContext; 
+ 
+</span><span class="s0">public class </span><span class="s1">MainActivity </span><span class="s0">extends </span><span class="s1">AppCompatActivity </span><span class="s0">implements </span><span class="s1">STTService.STTEvent { 
+    </span><span class="s0">public static final </span><span class="s1">String TAG = </span><span class="s2">&quot;MainActivity&quot;</span><span class="s1">;</span><span class="s3">//TAG</span><span class="s1"> 
+    Button menuButton, loginButton; </span><span class="s3">//選單按鈕 登入按鈕</span><span class="s1"> 
+    SharedPreferences sharedPreferences;</span><span class="s3">//存取資料</span><span class="s1"> 
+    SQLiteDatabase sqLiteDatabase;</span><span class="s3">//手機資料庫</span><span class="s1"> 
+    TextView nick;</span><span class="s3">//使用者登入後顯示暱稱</span><span class="s1"> 
+    ImageView imageView;</span><span class="s3">//首頁圖片</span><span class="s1"> 
+    ImageButton search;</span><span class="s3">//搜尋按鈕</span><span class="s1"> 
+    DrawerLayout drawerLayout;</span><span class="s3">//左側選單</span><span class="s1"> 
+    NavigationView nav_view;</span><span class="s3">//左側選單內容</span><span class="s1"> 
+    </span><span class="s3">//Fragment</span><span class="s1"> 
+    Fragment currentFragement; 
+    FragmentTransaction transaction; 
+    FragmentManager fragmentManager; 
+    </span><span class="s0">public </span><span class="s1">STTService.MyBinder binder = </span><span class="s0">null</span><span class="s1">;</span><span class="s3">//STT Service</span><span class="s1"> 
+    Toast toast;</span><span class="s3">//訊息提示</span><span class="s1"> 
+ 
+    </span><span class="s3">//Fragment 換頁</span><span class="s1"> 
+    </span><span class="s0">public void </span><span class="s1">changeFragement(Class&lt;? </span><span class="s0">extends </span><span class="s1">Fragment&gt; fragmentClass, Bundle args) { 
+        </span><span class="s0">try </span><span class="s1">{ 
+            currentFragement = fragmentClass.newInstance(); 
+            currentFragement.setArguments(args); 
+            transaction = fragmentManager.beginTransaction(); 
+            transaction.replace(R.id.content_frame, currentFragement, currentFragement.getClass().getSimpleName()); 
+            Log.d(</span><span class="s2">&quot;changeFragment&quot;</span><span class="s1">, </span><span class="s2">&quot;to &quot; </span><span class="s1">+ currentFragement.getClass().getSimpleName()); 
+            transaction.commitAllowingStateLoss(); 
+        } </span><span class="s0">catch </span><span class="s1">(Exception e) { 
+            e.printStackTrace(); 
+        } 
+    } 
+ 
+    </span><span class="s0">public void </span><span class="s1">changeFragement(Class&lt;? </span><span class="s0">extends </span><span class="s1">Fragment&gt; fragmentClass) { 
+        changeFragement(fragmentClass, </span><span class="s0">null</span><span class="s1">); 
+    } 
+ 
+    </span><span class="s0">private void </span><span class="s1">initFragement() { 
+        fragmentManager = getFragmentManager(); 
+        </span><span class="s0">try </span><span class="s1">{ 
+            currentFragement = </span><span class="s0">new </span><span class="s1">HomePage(); 
+            transaction = fragmentManager.beginTransaction(); 
+            transaction.add(R.id.content_frame, currentFragement, currentFragement.getClass().getSimpleName()); 
+            Log.d(</span><span class="s2">&quot;changeFragment&quot;</span><span class="s1">, </span><span class="s2">&quot;to &quot; </span><span class="s1">+ currentFragement.getClass().getSimpleName()); 
+            transaction.commitAllowingStateLoss(); 
+        } </span><span class="s0">catch </span><span class="s1">(Exception e) { 
+            e.printStackTrace(); 
+        } 
+    } 
+ 
+    </span><span class="s0">private void </span><span class="s1">checkLogin() { 
+        </span><span class="s0">if </span><span class="s1">(sharedPreferences.getBoolean(Config.LOGGEDIN_SHARED_PREF, </span><span class="s0">false</span><span class="s1">)) { 
+            Map&lt;String, ?&gt; stringMap = sharedPreferences.getAll(); 
+            loginButton.setText(</span><span class="s2">&quot;登出&quot;</span><span class="s1">); 
+            nick.setText(stringMap.get(</span><span class="s2">&quot;nick&quot;</span><span class="s1">).toString()); 
+            </span><span class="s0">if </span><span class="s1">(Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) { 
+                imageView.setImageDrawable(getDrawable(R.drawable.robot)); 
+            } 
+ 
+        } </span><span class="s0">else </span><span class="s1">{ 
+            nick.setText(</span><span class="s2">&quot;&quot;</span><span class="s1">); 
+            loginButton.setText(</span><span class="s2">&quot;登入&quot;</span><span class="s1">); 
+            </span><span class="s0">if </span><span class="s1">(Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.LOLLIPOP) { 
+                imageView.setImageDrawable(getDrawable(R.drawable.robot2)); 
+            } 
+        } 
+ 
+ 
+    }</span><span class="s3">//檢查是否登入</span><span class="s1"> 
+ 
+    </span><span class="s0">private void </span><span class="s1">createDatabase() { 
+        </span><span class="s0">final </span><span class="s1">String dbname = </span><span class="s2">&quot;ggfood&quot;</span><span class="s1">; 
+        </span><span class="s0">final </span><span class="s1">String history_table = </span><span class="s2">&quot;history&quot;</span><span class="s1">; 
+        sqLiteDatabase = openOrCreateDatabase(dbname, Context.MODE_PRIVATE, </span><span class="s0">null</span><span class="s1">); 
+        String createTable = </span><span class="s2">&quot;CREATE TABLE IF NOT EXISTS &quot; </span><span class="s1">+ history_table + </span><span class="s2">&quot; (id INT AUTO_INCREMENT,recipe_name VARCHAR(100),recipe_id INT,date Date,PRIMARY KEY (id));&quot;</span><span class="s1">; 
+        sqLiteDatabase.execSQL(createTable); 
+    }</span><span class="s3">//建立手機資料庫</span><span class="s1"> 
+ 
+    </span><span class="s0">private </span><span class="s1">ServiceConnection mConnection = </span><span class="s0">new </span><span class="s1">ServiceConnection() { 
+        @Override 
+        </span><span class="s0">public void </span><span class="s1">onServiceConnected(ComponentName className, 
+                                       IBinder service) { 
+            Log.e(TAG, </span><span class="s2">&quot;onServiceConnected&quot;</span><span class="s1">); 
+            binder = ((STTService.MyBinder) service); 
+            binder.registerListener(MainActivity.</span><span class="s0">this</span><span class="s1">); 
+        } 
+ 
+        @Override 
+        </span><span class="s0">public void </span><span class="s1">onServiceDisconnected(ComponentName arg0) { 
+            Log.e(TAG, </span><span class="s2">&quot;onServiceDisconnected&quot;</span><span class="s1">); 
+            binder.unregisterListener(MainActivity.</span><span class="s0">this</span><span class="s1">); 
+            binder = </span><span class="s0">null</span><span class="s1">; 
+        } 
+    };</span><span class="s3">//連接Service</span><span class="s1"> 
+ 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">onCreate(</span><span class="s0">final </span><span class="s1">Bundle savedInstanceState) { 
+        </span><span class="s0">super</span><span class="s1">.onCreate(savedInstanceState); 
+        setContentView(R.layout.activity_main); 
+        getSupportActionBar().hide(); </span><span class="s3">//隱藏標題</span><span class="s1"> 
+        initFragement();</span><span class="s3">//初始化Fragement</span><span class="s1"> 
+        createDatabase();</span><span class="s3">//建立資料庫，已建立忽略</span><span class="s1"> 
+        setConfig();</span><span class="s3">//取得設定資料</span><span class="s1"> 
+        sharedPreferences = </span><span class="s0">this</span><span class="s1">.getSharedPreferences(Config.SHARED_PREF_NAME, Context.MODE_PRIVATE);</span><span class="s3">//設定存取資料模式</span><span class="s1"> 
+        </span><span class="s3">// 權限</span><span class="s1"> 
+        checkAudioRecordPermission(); 
+        toast = Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;&quot;</span><span class="s1">, Toast.LENGTH_SHORT); 
+        </span><span class="s3">//初始化 action bar</span><span class="s1"> 
+        menuButton = (Button) findViewById(R.id.button); 
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout); 
+        menuButton.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() { 
+            @Override 
+            </span><span class="s0">public void </span><span class="s1">onClick(View v) { 
+                drawerLayout.openDrawer(Gravity.LEFT); 
+            } 
+        }); 
+        </span><span class="s3">//防止Icon被填入灰色</span><span class="s1"> 
+        nav_view = (NavigationView) findViewById(R.id.nav_view); 
+        nav_view.setItemIconTintList(</span><span class="s0">null</span><span class="s1">); 
+        nav_view.setNavigationItemSelectedListener(</span><span class="s0">new </span><span class="s1">NavigationView.OnNavigationItemSelectedListener() { 
+            @Override 
+            </span><span class="s0">public boolean </span><span class="s1">onNavigationItemSelected(@NonNull MenuItem item) {</span><span class="s3">//設定左邊欄內容</span><span class="s1"> 
+                </span><span class="s0">int </span><span class="s1">id = item.getItemId(); 
+                </span><span class="s0">switch </span><span class="s1">(id) { 
+                    </span><span class="s0">case </span><span class="s1">R.id.nav_home: { 
+                        Log.e(</span><span class="s2">&quot;Item&quot;</span><span class="s1">, </span><span class="s2">&quot;home&quot;</span><span class="s1">); 
+                        changeFragement(HomePage.</span><span class="s0">class</span><span class="s1">); 
+                        drawerLayout.closeDrawers(); 
+                        </span><span class="s0">break</span><span class="s1">; 
+                    } 
+                    </span><span class="s0">case </span><span class="s1">R.id.nav_doc: { 
+                        Log.e(</span><span class="s2">&quot;Item&quot;</span><span class="s1">, </span><span class="s2">&quot;doc&quot;</span><span class="s1">); 
+                        changeFragement(Personal.</span><span class="s0">class</span><span class="s1">); 
+                        drawerLayout.closeDrawers(); 
+                        </span><span class="s0">break</span><span class="s1">; 
+                    } 
+                    </span><span class="s0">case </span><span class="s1">R.id.nav_good: { 
+                        Log.e(</span><span class="s2">&quot;Item&quot;</span><span class="s1">, </span><span class="s2">&quot;good&quot;</span><span class="s1">); 
+                        changeFragement(Recommend.</span><span class="s0">class</span><span class="s1">); 
+                        drawerLayout.closeDrawers(); 
+                        </span><span class="s0">break</span><span class="s1">; 
+                    } 
+                    </span><span class="s0">case </span><span class="s1">R.id.nav_fredge: { 
+                        Log.e(</span><span class="s2">&quot;Item&quot;</span><span class="s1">, </span><span class="s2">&quot;fredge&quot;</span><span class="s1">); 
+                        changeFragement(IceBox.</span><span class="s0">class</span><span class="s1">); 
+                        drawerLayout.closeDrawers(); 
+                        </span><span class="s0">break</span><span class="s1">; 
+                    } 
+                    </span><span class="s0">case </span><span class="s1">R.id.nav_history: { 
+                        Log.e(</span><span class="s2">&quot;Item&quot;</span><span class="s1">, </span><span class="s2">&quot;history&quot;</span><span class="s1">); 
+                        changeFragement(History.</span><span class="s0">class</span><span class="s1">); 
+                        drawerLayout.closeDrawers(); 
+                        </span><span class="s0">break</span><span class="s1">; 
+                    } 
+                    </span><span class="s0">case </span><span class="s1">R.id.nav_settings: { 
+                        Log.e(</span><span class="s2">&quot;Item&quot;</span><span class="s1">, </span><span class="s2">&quot;settings&quot;</span><span class="s1">); 
+                        changeFragement(Settings.</span><span class="s0">class</span><span class="s1">); 
+                        drawerLayout.closeDrawers(); 
+                        </span><span class="s0">break</span><span class="s1">; 
+                    } 
+                    </span><span class="s0">case </span><span class="s1">R.id.nav_order: { 
+                        Log.e(</span><span class="s2">&quot;Item&quot;</span><span class="s1">, </span><span class="s2">&quot;order&quot;</span><span class="s1">); 
+                        changeFragement(Order.</span><span class="s0">class</span><span class="s1">); 
+                        drawerLayout.closeDrawers(); 
+                        </span><span class="s0">break</span><span class="s1">; 
+                    } 
+                } 
+                </span><span class="s0">return false</span><span class="s1">; 
+            } 
+        }); 
+        </span><span class="s3">//初始化側邊選單、Fragment、action bar和各個介面上的按鈕</span><span class="s1"> 
+        </span><span class="s3">//連接STT Service</span><span class="s1"> 
+        Intent it = </span><span class="s0">new </span><span class="s1">Intent(</span><span class="s0">this</span><span class="s1">, STTService.</span><span class="s0">class</span><span class="s1">); 
+        </span><span class="s0">if </span><span class="s1">(!bindService(it, mConnection, Context.BIND_AUTO_CREATE)) 
+            showToast(</span><span class="s2">&quot;bind service is failed&quot;</span><span class="s1">); 
+        </span><span class="s3">//login</span><span class="s1"> 
+        loginButton = (Button) nav_view.getHeaderView(</span><span class="s4">0</span><span class="s1">).findViewById(R.id.btn_login); 
+        loginButton.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() { 
+            @Override 
+            </span><span class="s0">public void </span><span class="s1">onClick(View v) { 
+                </span><span class="s0">if </span><span class="s1">(sharedPreferences.getBoolean(Config.LOGGEDIN_SHARED_PREF, </span><span class="s0">false</span><span class="s1">)) { 
+                    sharedPreferences.edit().clear().commit(); 
+                    Toast.makeText(MainActivity.</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;已登出&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show(); 
+                    checkLogin(); 
+                } </span><span class="s0">else </span><span class="s1">{ 
+                    Intent intent = </span><span class="s0">new </span><span class="s1">Intent(MainActivity.</span><span class="s0">this</span><span class="s1">, Login.</span><span class="s0">class</span><span class="s1">); 
+                    startActivity(intent); 
+                } 
+            } 
+        }); 
+        imageView = (ImageView) nav_view.getHeaderView(</span><span class="s4">0</span><span class="s1">).findViewById(R.id.login_image);</span><span class="s3">//設定登入圖片</span><span class="s1"> 
+        nick = (TextView) nav_view.getHeaderView(</span><span class="s4">0</span><span class="s1">).findViewById(R.id.nick_tv);</span><span class="s3">//設定暱稱</span><span class="s1"> 
+        </span><span class="s3">//search 按鈕設定</span><span class="s1"> 
+        search = (ImageButton) findViewById(R.id.search_btn); 
+        search.setOnClickListener(</span><span class="s0">new </span><span class="s1">View.OnClickListener() { 
+            @Override 
+            </span><span class="s0">public void </span><span class="s1">onClick(View v) { 
+                Intent intent = </span><span class="s0">new </span><span class="s1">Intent(MainActivity.</span><span class="s0">this</span><span class="s1">, Search.</span><span class="s0">class</span><span class="s1">); 
+                startActivity(intent); 
+            } 
+        }); 
+        checkLogin();</span><span class="s3">//檢查登入</span><span class="s1"> 
+    } 
+ 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">onStart() { 
+        </span><span class="s0">super</span><span class="s1">.onStart(); 
+    } 
+ 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">onResume() { 
+        </span><span class="s0">super</span><span class="s1">.onResume(); 
+        checkLogin(); 
+    } 
+ 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">onPause() { 
+        </span><span class="s0">super</span><span class="s1">.onPause(); 
+    } 
+ 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">onStop() { 
+        </span><span class="s0">super</span><span class="s1">.onStop(); 
+    } 
+ 
+    @Override 
+    </span><span class="s0">protected void </span><span class="s1">onDestroy() { 
+        </span><span class="s0">super</span><span class="s1">.onDestroy(); 
+        unbindService(mConnection); 
+    } 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">onSTTResult(JSONObject result) { 
+        Log.e(</span><span class="s2">&quot;onSTTResult&quot;</span><span class="s1">, result.toString()); 
+        </span><span class="s0">try </span><span class="s1">{ 
+            </span><span class="s0">switch </span><span class="s1">(result.getString(</span><span class="s2">&quot;action&quot;</span><span class="s1">)) { 
+                </span><span class="s0">case </span><span class="s2">&quot;recommend&quot;</span><span class="s1">: {</span><span class="s3">//一般推薦</span><span class="s1"> 
+                    </span><span class="s0">if </span><span class="s1">(currentFragement </span><span class="s0">instanceof </span><span class="s1">Recommend) { 
+                        ((Recommend) currentFragement).startRecommend(); 
+                    } </span><span class="s0">else </span><span class="s1">{ 
+                        drawerLayout.closeDrawers(); 
+                        changeFragement(Recommend.</span><span class="s0">class</span><span class="s1">); 
+                    } 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;recommend_catalog&quot;</span><span class="s1">: {</span><span class="s3">//指定分類的推薦</span><span class="s1"> 
+                    HashMap&lt;String, JsonElement&gt; params = (HashMap&lt;String, JsonElement&gt;) result.get(</span><span class="s2">&quot;Parameters&quot;</span><span class="s1">); 
+                    </span><span class="s0">if </span><span class="s1">(currentFragement </span><span class="s0">instanceof </span><span class="s1">Recommend) { 
+                        ((Recommend) currentFragement).startRecommend(params.get(</span><span class="s2">&quot;pecies&quot;</span><span class="s1">).getAsString()); 
+                    } </span><span class="s0">else </span><span class="s1">{ 
+                        drawerLayout.closeDrawers(); 
+                        Bundle args = </span><span class="s0">new </span><span class="s1">Bundle(); 
+                        args.putString(Recommend.SPECIFY_CATEGORY_ARG, params.get(</span><span class="s2">&quot;pecies&quot;</span><span class="s1">).getAsString()); 
+                        changeFragement(Recommend.</span><span class="s0">class</span><span class="s1">, args); 
+                    } 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;search_recipe&quot;</span><span class="s1">: { 
+                    Intent intent = </span><span class="s0">new </span><span class="s1">Intent(MainActivity.</span><span class="s0">this</span><span class="s1">, Search.</span><span class="s0">class</span><span class="s1">); 
+                    HashMap&lt;String, JsonElement&gt; params = (HashMap&lt;String, JsonElement&gt;) result.get(</span><span class="s2">&quot;Parameters&quot;</span><span class="s1">); 
+                    intent.putExtra(</span><span class="s2">&quot;recipe&quot;</span><span class="s1">, params.get(</span><span class="s2">&quot;recipe&quot;</span><span class="s1">).toString()); 
+                    startActivity(intent); 
+ 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;search_ingredient&quot;</span><span class="s1">: { 
+ 
+                    Intent intent = </span><span class="s0">new </span><span class="s1">Intent(MainActivity.</span><span class="s0">this</span><span class="s1">, Search.</span><span class="s0">class</span><span class="s1">); 
+                    HashMap&lt;String, JsonElement&gt; params = (HashMap&lt;String, JsonElement&gt;) result.get(</span><span class="s2">&quot;Parameters&quot;</span><span class="s1">); 
+                    intent.putExtra(</span><span class="s2">&quot;ingredient&quot;</span><span class="s1">, params.get(</span><span class="s2">&quot;ingredient&quot;</span><span class="s1">).toString()); 
+                    </span><span class="s0">if </span><span class="s1">(params.get(</span><span class="s2">&quot;pecies&quot;</span><span class="s1">) != </span><span class="s0">null</span><span class="s1">) 
+                        intent.putExtra(</span><span class="s2">&quot;categories&quot;</span><span class="s1">, params.get(</span><span class="s2">&quot;pecies&quot;</span><span class="s1">).toString()); 
+                    startActivity(intent); 
+ 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;search_ingredient_plus&quot;</span><span class="s1">: { 
+                    Intent intent = </span><span class="s0">new </span><span class="s1">Intent(MainActivity.</span><span class="s0">this</span><span class="s1">, Search.</span><span class="s0">class</span><span class="s1">); 
+                    HashMap&lt;String, JsonElement&gt; params = (HashMap&lt;String, JsonElement&gt;) result.get(</span><span class="s2">&quot;Parameters&quot;</span><span class="s1">); 
+                    intent.putExtra(</span><span class="s2">&quot;ingredient&quot;</span><span class="s1">, params.get(</span><span class="s2">&quot;ingredient&quot;</span><span class="s1">).toString()); 
+                    </span><span class="s0">if </span><span class="s1">(params.get(</span><span class="s2">&quot;pecies&quot;</span><span class="s1">) != </span><span class="s0">null</span><span class="s1">) 
+                        intent.putExtra(</span><span class="s2">&quot;categories&quot;</span><span class="s1">, params.get(</span><span class="s2">&quot;pecies&quot;</span><span class="s1">).toString()); 
+                    intent.putExtra(</span><span class="s2">&quot;reading&quot;</span><span class="s1">, </span><span class="s0">true</span><span class="s1">);</span><span class="s3">//特殊模式</span><span class="s1"> 
+                    startActivity(intent); 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;warehouse&quot;</span><span class="s1">: { 
+                    List&lt;Map&lt;String, Object&gt;&gt; mapList = </span><span class="s0">new </span><span class="s1">ArrayList&lt;Map&lt;String, Object&gt;&gt;(); 
+                    Cursor cursor = sqLiteDatabase.rawQuery(</span><span class="s2">&quot;SELECT * FROM ice_box&quot;</span><span class="s1">, </span><span class="s0">null</span><span class="s1">); 
+                    </span><span class="s0">if </span><span class="s1">(cursor.getCount() != </span><span class="s4">0</span><span class="s1">) { 
+                        cursor.moveToFirst(); 
+                        </span><span class="s0">do </span><span class="s1">{ 
+                            Map&lt;String, Object&gt; map = </span><span class="s0">new </span><span class="s1">HashMap&lt;&gt;(); 
+                            map.put(</span><span class="s2">&quot;NAME&quot;</span><span class="s1">, cursor.getString(</span><span class="s4">1</span><span class="s1">)); 
+                            map.put(</span><span class="s2">&quot;QUANTITY&quot;</span><span class="s1">, cursor.getString(</span><span class="s4">2</span><span class="s1">)); 
+                            mapList.add(map); 
+                            Log.e(</span><span class="s2">&quot;冰箱&quot;</span><span class="s1">, cursor.getString(</span><span class="s4">1</span><span class="s1">) + cursor.getString(</span><span class="s4">2</span><span class="s1">)); 
+                        } </span><span class="s0">while </span><span class="s1">(cursor.moveToNext()); 
+                        String str = </span><span class="s2">&quot;冰箱裡有&quot;</span><span class="s1">; 
+                        </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s1">; i &lt; mapList.size(); i++) { 
+                            str += mapList.get(i).get(</span><span class="s2">&quot;NAME&quot;</span><span class="s1">) + </span><span class="s2">&quot;。&quot; </span><span class="s1">+ mapList.get(i).get(</span><span class="s2">&quot;QUANTITY&quot;</span><span class="s1">) + </span><span class="s2">&quot;。&quot;</span><span class="s1">; 
+                        } 
+                        binder.startSpeak(str); 
+                    } </span><span class="s0">else </span><span class="s1">{ 
+                        binder.startSpeak(</span><span class="s2">&quot;冰箱裡沒有東西&quot;</span><span class="s1">); 
+                    } 
+ 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;icebox_what&quot;</span><span class="s1">: { 
+                    HashMap&lt;String, JsonElement&gt; params = (HashMap&lt;String, JsonElement&gt;) result.get(</span><span class="s2">&quot;Parameters&quot;</span><span class="s1">); 
+                    List&lt;Map&lt;String, Object&gt;&gt; mapList = </span><span class="s0">new </span><span class="s1">ArrayList&lt;Map&lt;String, Object&gt;&gt;(); 
+                    Cursor cursor = sqLiteDatabase.rawQuery(</span><span class="s2">&quot;SELECT * FROM ice_box&quot;</span><span class="s1">, </span><span class="s0">null</span><span class="s1">); 
+                    </span><span class="s0">if </span><span class="s1">(cursor.getCount() != </span><span class="s4">0</span><span class="s1">) { 
+                        cursor.moveToFirst(); 
+                        </span><span class="s0">do </span><span class="s1">{ 
+                            Map&lt;String, Object&gt; map = </span><span class="s0">new </span><span class="s1">HashMap&lt;&gt;(); 
+                            map.put(</span><span class="s2">&quot;NAME&quot;</span><span class="s1">, cursor.getString(</span><span class="s4">1</span><span class="s1">)); 
+                            map.put(</span><span class="s2">&quot;QUANTITY&quot;</span><span class="s1">, cursor.getString(</span><span class="s4">2</span><span class="s1">)); 
+                            mapList.add(map); 
+                        } </span><span class="s0">while </span><span class="s1">(cursor.moveToNext()); 
+                    } 
+                    </span><span class="s0">boolean </span><span class="s1">yesorno = </span><span class="s0">false</span><span class="s1">; 
+                    </span><span class="s0">for </span><span class="s1">(</span><span class="s0">int </span><span class="s1">i = </span><span class="s4">0</span><span class="s1">; i &lt; mapList.size(); i++) { 
+                        Log.e(</span><span class="s2">&quot;iceBOX&quot;</span><span class="s1">, mapList.get(i).get(</span><span class="s2">&quot;NAME&quot;</span><span class="s1">).toString() + </span><span class="s2">&quot;  :  &quot; </span><span class="s1">+ params.get(</span><span class="s2">&quot;any&quot;</span><span class="s1">).toString()); 
+                        String recipe = params.get(</span><span class="s2">&quot;any&quot;</span><span class="s1">).toString(); 
+                        StringBuilder sb = </span><span class="s0">new </span><span class="s1">StringBuilder(recipe.length()); 
+                        </span><span class="s0">if </span><span class="s1">(recipe.length() &gt; </span><span class="s4">1</span><span class="s1">) { 
+                            sb.append(recipe, </span><span class="s4">1</span><span class="s1">, recipe.length() - </span><span class="s4">1</span><span class="s1">); 
+                        } 
+                        </span><span class="s0">if </span><span class="s1">(mapList.get(i).get(</span><span class="s2">&quot;NAME&quot;</span><span class="s1">).toString().equals(sb.toString())) { 
+ 
+                            binder.startSpeak(</span><span class="s2">&quot;有&quot;</span><span class="s1">); 
+                            yesorno = </span><span class="s0">true</span><span class="s1">; 
+                            </span><span class="s0">break</span><span class="s1">; 
+                        } 
+                    } 
+                    </span><span class="s0">if </span><span class="s1">(!yesorno) { 
+ 
+                        String url = </span><span class="s2">&quot;http://&quot; </span><span class="s1">+ Config.HOSTURL + </span><span class="s2">&quot;/ggfood/shop/query/product_search.php&quot;</span><span class="s1">; 
+                        </span><span class="s0">try </span><span class="s1">{ 
+                            AsyncHttpSender.Request request = </span><span class="s0">new </span><span class="s1">AsyncHttpSender.Request(url); 
+                            request.setPostData(</span><span class="s2">&quot;name&quot;</span><span class="s1">, params.get(</span><span class="s2">&quot;any&quot;</span><span class="s1">).getAsString()); 
+                            AsyncHttpSender.send(request, 
+                                    </span><span class="s0">new </span><span class="s1">AsyncHttpSender.ResponseListener() { 
+                                        @Override 
+                                        </span><span class="s0">public </span><span class="s1">Object onResponse(</span><span class="s0">int </span><span class="s1">responseCode, Map&lt;String, List&lt;String&gt;&gt; headers, InputStream is) { 
+                                            </span><span class="s0">try </span><span class="s1">{ 
+                                                BufferedReader in = </span><span class="s0">new </span><span class="s1">BufferedReader(</span><span class="s0">new </span><span class="s1">InputStreamReader(is, </span><span class="s2">&quot;UTF-8&quot;</span><span class="s1">)); 
+                                                String response; 
+                                                StringBuilder sb = </span><span class="s0">new </span><span class="s1">StringBuilder(</span><span class="s4">20</span><span class="s1">); 
+                                                String v; 
+                                                </span><span class="s0">while </span><span class="s1">((v = in.readLine()) != </span><span class="s0">null</span><span class="s1">) { 
+                                                    sb.append(v); 
+                                                } 
+                                                response = sb.toString(); 
+                                                Log.e(</span><span class="s2">&quot;onResponse&quot;</span><span class="s1">, response); 
+                                                </span><span class="s0">try </span><span class="s1">{ 
+                                                    JSONObject jsonobject = </span><span class="s0">new </span><span class="s1">JSONObject(response); 
+                                                    JSONArray jsonarray = jsonobject.getJSONArray(</span><span class="s2">&quot;results&quot;</span><span class="s1">); 
+                                                    </span><span class="s0">return </span><span class="s1">jsonarray; 
+                                                } </span><span class="s0">catch </span><span class="s1">(JSONException e) { 
+                                                    e.printStackTrace(); 
+                                                } 
+                                            } </span><span class="s0">catch </span><span class="s1">(IOException e) { 
+                                                e.printStackTrace(); 
+                                            } 
+                                            </span><span class="s0">return null</span><span class="s1">; 
+                                        } 
+ 
+                                        @Override 
+                                        </span><span class="s0">public void </span><span class="s1">onFinish(</span><span class="s0">int </span><span class="s1">responseCode, Map&lt;String, List&lt;String&gt;&gt; headers, Object data) { 
+                                            </span><span class="s0">if </span><span class="s1">(data != </span><span class="s0">null</span><span class="s1">) { 
+                                                </span><span class="s0">try </span><span class="s1">{ 
+                                                    JSONArray arr = (JSONArray) data; 
+                                                    JSONObject item = arr.getJSONObject(</span><span class="s4">0</span><span class="s1">); 
+                                                    </span><span class="s0">if </span><span class="s1">(arr.length() &gt;= </span><span class="s4">1</span><span class="s1">) { 
+                                                        binder.startSpeak(</span><span class="s2">&quot;沒有。要不要訂購呢。現在&quot; </span><span class="s1">+ item.getString(</span><span class="s2">&quot;name&quot;</span><span class="s1">) + </span><span class="s2">&quot;每份&quot; </span><span class="s1">+ item.getString(</span><span class="s2">&quot;unit&quot;</span><span class="s1">) + item.getString(</span><span class="s2">&quot;price&quot;</span><span class="s1">) + </span><span class="s2">&quot;元&quot;</span><span class="s1">); 
+                                                        binder.textRequest(</span><span class="s2">&quot;order set context &quot; </span><span class="s1">+ item.getInt(</span><span class="s2">&quot;id&quot;</span><span class="s1">)); 
+                                                    } </span><span class="s0">else </span><span class="s1">{ 
+                                                        binder.startSpeak(</span><span class="s2">&quot;沒有&quot;</span><span class="s1">); 
+                                                    } 
+                                                } </span><span class="s0">catch </span><span class="s1">(JSONException e) { 
+                                                    e.printStackTrace(); 
+                                                    binder.startSpeak(</span><span class="s2">&quot;沒有&quot;</span><span class="s1">); 
+                                                } 
+                                            } 
+                                        } 
+                                    }); 
+                        } </span><span class="s0">catch </span><span class="s1">(IOException e) { 
+                            e.printStackTrace(); 
+                        } 
+                    } 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;order_quantity&quot;</span><span class="s1">: { 
+                    HashMap&lt;String, JsonElement&gt; params = (HashMap&lt;String, JsonElement&gt;) result.get(</span><span class="s2">&quot;Parameters&quot;</span><span class="s1">); 
+                    List&lt;AIOutputContext&gt; contexts = (List&lt;AIOutputContext&gt;) result.get(</span><span class="s2">&quot;contexts&quot;</span><span class="s1">); 
+                    </span><span class="s0">for </span><span class="s1">(AIOutputContext context : contexts) { 
+                        </span><span class="s0">if </span><span class="s1">(context.getName().equals(</span><span class="s2">&quot;order_info&quot;</span><span class="s1">)) { 
+                            </span><span class="s3">//數量</span><span class="s1"> 
+                            </span><span class="s0">try </span><span class="s1">{ 
+                                </span><span class="s0">int </span><span class="s1">quantity = params.get(</span><span class="s2">&quot;quantity&quot;</span><span class="s1">).getAsInt(); 
+                                </span><span class="s0">int </span><span class="s1">id = context.getParameters().get(</span><span class="s2">&quot;id&quot;</span><span class="s1">).getAsInt(); 
+                                Log.e(</span><span class="s2">&quot;order_quantity&quot;</span><span class="s1">, context.getParameters().toString()); 
+                                Log.e(</span><span class="s2">&quot;order_quantity&quot;</span><span class="s1">, </span><span class="s2">&quot;id : &quot; </span><span class="s1">+ id + </span><span class="s2">&quot;  quantity : &quot; </span><span class="s1">+ quantity); 
+                                sendOrderRequest(id, quantity); 
+                                </span><span class="s0">break</span><span class="s1">; 
+                            } </span><span class="s0">catch </span><span class="s1">(Exception e) { 
+                                Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;不明的錯誤&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show(); 
+                            } 
+                        } 
+                    } 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;open_history&quot;</span><span class="s1">: { 
+                    Log.e(</span><span class="s2">&quot;Item&quot;</span><span class="s1">, </span><span class="s2">&quot;history&quot;</span><span class="s1">); 
+                    changeFragement(History.</span><span class="s0">class</span><span class="s1">); 
+                    drawerLayout.closeDrawers(); 
+                    </span><span class="s0">break</span><span class="s1">; 
+                } 
+                </span><span class="s0">case </span><span class="s2">&quot;open_scan_activity&quot;</span><span class="s1">: { 
+                    currentFragement = </span><span class="s0">new </span><span class="s1">IceBox(); 
+                    Bundle bundle = </span><span class="s0">new </span><span class="s1">Bundle(); 
+                    bundle.putBoolean(</span><span class="s2">&quot;auto_start_qr_scan&quot;</span><span class="s1">, </span><span class="s0">true</span><span class="s1">); 
+                    currentFragement.setArguments(bundle); 
+                    transaction = fragmentManager.beginTransaction(); 
+                    transaction.replace(R.id.content_frame, currentFragement, currentFragement.getClass().getSimpleName()); 
+                    Log.d(</span><span class="s2">&quot;changeFragment&quot;</span><span class="s1">, </span><span class="s2">&quot;to &quot; </span><span class="s1">+ currentFragement.getClass().getSimpleName()); 
+                    transaction.commitAllowingStateLoss(); 
+                } 
+                </span><span class="s0">break</span><span class="s1">; 
+            } 
+ 
+        } </span><span class="s0">catch </span><span class="s1">(JSONException e) { 
+            e.printStackTrace(); 
+        } 
+    }</span><span class="s3">//STT Service 傳回結果</span><span class="s1"> 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">onStartRecord() { 
+        showToast(</span><span class="s2">&quot;START&quot;</span><span class="s1">); 
+    }</span><span class="s3">//開始聆聽 提示</span><span class="s1"> 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">onStopRecord() { 
+        showToast(</span><span class="s2">&quot;STOP&quot;</span><span class="s1">); 
+    }</span><span class="s3">//結束聆聽 提示</span><span class="s1"> 
+ 
+    </span><span class="s0">private void </span><span class="s1">showToast(String msg) { 
+        toast.setText(msg); 
+        toast.show(); 
+    }</span><span class="s3">//提示</span><span class="s1"> 
+ 
+    </span><span class="s0">protected void </span><span class="s1">checkAudioRecordPermission() { 
+        </span><span class="s0">if </span><span class="s1">(ContextCompat.checkSelfPermission(</span><span class="s0">this</span><span class="s1">, 
+                Manifest.permission.RECORD_AUDIO) 
+                != PackageManager.PERMISSION_GRANTED) { 
+            </span><span class="s3">// Should we show an explanation?</span><span class="s1"> 
+            </span><span class="s0">if </span><span class="s1">(ActivityCompat.shouldShowRequestPermissionRationale(</span><span class="s0">this</span><span class="s1">, 
+                    Manifest.permission.RECORD_AUDIO)) { 
+                </span><span class="s3">// Show an expanation to the user *asynchronously* -- don't block</span><span class="s1"> 
+                </span><span class="s3">// this thread waiting for the user's response! After the user</span><span class="s1"> 
+                </span><span class="s3">// sees the explanation, try again to request the permission.</span><span class="s1"> 
+            } </span><span class="s0">else </span><span class="s1">{ 
+                </span><span class="s3">// No explanation needed, we can request the permission.</span><span class="s1"> 
+                ActivityCompat.requestPermissions(</span><span class="s0">this</span><span class="s1">, 
+                        </span><span class="s0">new </span><span class="s1">String[]{Manifest.permission.RECORD_AUDIO}, 
+                        </span><span class="s4">33</span><span class="s1">); 
+            } 
+        } 
+    }</span><span class="s3">//檢查權限</span><span class="s1"> 
+ 
+    @Override 
+    </span><span class="s0">public void </span><span class="s1">onRequestPermissionsResult(</span><span class="s0">int </span><span class="s1">requestCode, @NonNull String[] permissions, @NonNull </span><span class="s0">int</span><span class="s1">[] grantResults) { 
+        </span><span class="s0">super</span><span class="s1">.onRequestPermissionsResult(requestCode, permissions, grantResults); 
+    }</span><span class="s3">//權限</span><span class="s1"> 
+ 
+    </span><span class="s0">private void </span><span class="s1">sendOrderRequest(</span><span class="s0">int </span><span class="s1">p_id, </span><span class="s0">int </span><span class="s1">quantity) { 
+        Log.e(</span><span class="s2">&quot;sendOrderRequest&quot;</span><span class="s1">, </span><span class="s2">&quot;run&quot; </span><span class="s1">+ sharedPreferences.getBoolean(Config.LOGGEDIN_SHARED_PREF, </span><span class="s0">false</span><span class="s1">)); 
+        </span><span class="s0">if </span><span class="s1">(sharedPreferences.getBoolean(Config.LOGGEDIN_SHARED_PREF, </span><span class="s0">false</span><span class="s1">)) { 
+            String m_id = </span><span class="s2">&quot;&quot;</span><span class="s1">; 
+            String address = </span><span class="s2">&quot;&quot;</span><span class="s1">; 
+            String phone = </span><span class="s2">&quot;&quot;</span><span class="s1">; 
+            String url = </span><span class="s2">&quot;&quot;</span><span class="s1">; 
+            </span><span class="s0">try </span><span class="s1">{ 
+                m_id = sharedPreferences.getString(</span><span class="s2">&quot;account_id&quot;</span><span class="s1">, </span><span class="s2">&quot;&quot;</span><span class="s1">); 
+                address = sharedPreferences.getString(</span><span class="s2">&quot;address&quot;</span><span class="s1">, </span><span class="s2">&quot;&quot;</span><span class="s1">); 
+                phone = sharedPreferences.getString(</span><span class="s2">&quot;phone&quot;</span><span class="s1">, </span><span class="s2">&quot;&quot;</span><span class="s1">); 
+                url = </span><span class="s2">&quot;http://&quot; </span><span class="s1">+ Config.HOSTURL + </span><span class="s2">&quot;/ggfood/shop/query/order_insert.php?id=&quot; </span><span class="s1">+ m_id; 
+                Log.e(</span><span class="s2">&quot;sendOrderRequest&quot;</span><span class="s1">, 
+                        </span><span class="s2">&quot;測試&quot; </span><span class="s1">+ 
+                                address + </span><span class="s2">&quot;</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                                phone + </span><span class="s2">&quot;</span><span class="s0">\n</span><span class="s2">&quot; </span><span class="s1">+ 
+                                url); 
+            } </span><span class="s0">catch </span><span class="s1">(Exception e) { 
+                e.printStackTrace(); 
+            } 
+            </span><span class="s0">try </span><span class="s1">{ 
+                AsyncHttpSender.Request request = </span><span class="s0">new </span><span class="s1">AsyncHttpSender.Request(url); 
+                request.setPostData(</span><span class="s2">&quot;address&quot;</span><span class="s1">, address, </span><span class="s2">&quot;payment_method&quot;</span><span class="s1">, </span><span class="s2">&quot;1&quot;</span><span class="s1">, </span><span class="s2">&quot;delivery_method&quot;</span><span class="s1">, </span><span class="s2">&quot;0&quot;</span><span class="s1">, </span><span class="s2">&quot;phone&quot;</span><span class="s1">, phone, </span><span class="s2">&quot;note&quot;</span><span class="s1">, </span><span class="s2">&quot;系統訂購&quot;</span><span class="s1">, </span><span class="s2">&quot;pid[]&quot;</span><span class="s1">, </span><span class="s2">&quot;&quot; </span><span class="s1">+ p_id, </span><span class="s2">&quot;quantity[]&quot;</span><span class="s1">, </span><span class="s2">&quot;&quot; </span><span class="s1">+ quantity); 
+                AsyncHttpSender.send(request, 
+                        </span><span class="s0">new </span><span class="s1">AsyncHttpSender.ResponseListener() { 
+                            @Override 
+                            </span><span class="s0">public </span><span class="s1">Object onResponse(</span><span class="s0">int </span><span class="s1">responseCode, Map&lt;String, List&lt;String&gt;&gt; headers, InputStream is) { 
+                                </span><span class="s0">try </span><span class="s1">{ 
+                                    BufferedReader in = </span><span class="s0">new </span><span class="s1">BufferedReader(</span><span class="s0">new </span><span class="s1">InputStreamReader(is, </span><span class="s2">&quot;UTF-8&quot;</span><span class="s1">)); 
+                                    String response; 
+                                    StringBuilder sb = </span><span class="s0">new </span><span class="s1">StringBuilder(</span><span class="s4">20</span><span class="s1">); 
+                                    String v; 
+                                    </span><span class="s0">while </span><span class="s1">((v = in.readLine()) != </span><span class="s0">null</span><span class="s1">) { 
+                                        sb.append(v); 
+                                    } 
+                                    response = sb.toString(); 
+                                    Log.e(</span><span class="s2">&quot;onResponse&quot;</span><span class="s1">, response); 
+                                    JSONObject jsonObject = </span><span class="s0">new </span><span class="s1">JSONObject(response); 
+                                    binder.startSpeak(jsonObject.getString(</span><span class="s2">&quot;msg&quot;</span><span class="s1">)); 
+                                    </span><span class="s0">return </span><span class="s1">jsonObject.getString(</span><span class="s2">&quot;msg&quot;</span><span class="s1">); 
+                                } </span><span class="s0">catch </span><span class="s1">(JSONException e) { 
+                                    e.printStackTrace(); 
+                                } </span><span class="s0">catch </span><span class="s1">(IOException e) { 
+                                    e.printStackTrace(); 
+                                } 
+                                </span><span class="s0">return null</span><span class="s1">; 
+                            } 
+ 
+                            @Override 
+                            </span><span class="s0">public void </span><span class="s1">onFinish(</span><span class="s0">int </span><span class="s1">responseCode, Map&lt;String, List&lt;String&gt;&gt; headers, Object data) { 
+                                </span><span class="s0">if </span><span class="s1">(data != </span><span class="s0">null</span><span class="s1">) 
+                                    Toast.makeText(MainActivity.</span><span class="s0">this</span><span class="s1">, data.toString(), Toast.LENGTH_SHORT).show(); 
+                            } 
+                        }); 
+            } </span><span class="s0">catch </span><span class="s1">(IOException e) { 
+                e.printStackTrace(); 
+            } 
+ 
+        } </span><span class="s0">else </span><span class="s1">{ 
+            Toast.makeText(</span><span class="s0">this</span><span class="s1">, </span><span class="s2">&quot;請先登入&quot;</span><span class="s1">, Toast.LENGTH_SHORT).show(); 
+        } 
+ 
+ 
+    }</span><span class="s3">//傳送訂單要求</span><span class="s1"> 
+ 
+    </span><span class="s0">private void </span><span class="s1">setConfig() { 
+        SharedPreferences settings = </span><span class="s0">this</span><span class="s1">.getSharedPreferences(</span><span class="s2">&quot;Config&quot;</span><span class="s1">, </span><span class="s4">0</span><span class="s1">); 
+        Config.HOSTURL = settings.getString(</span><span class="s2">&quot;HOSTURL&quot;</span><span class="s1">, </span><span class="s2">&quot;wei18963.ddns.net&quot;</span><span class="s1">); 
+        Config.pitch = settings.getFloat(</span><span class="s2">&quot;PITCH&quot;</span><span class="s1">, </span><span class="s4">1.3f</span><span class="s1">); 
+        Config.rate = settings.getFloat(</span><span class="s2">&quot;RATE&quot;</span><span class="s1">, </span><span class="s4">1.5f</span><span class="s1">); 
+    }</span><span class="s3">//取得設定資料</span><span class="s1"> 
+} 
+ 
+ 
+</span></pre>
+</body>
+</html>

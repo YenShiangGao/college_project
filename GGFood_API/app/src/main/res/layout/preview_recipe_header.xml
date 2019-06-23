@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/recommend_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:background="@color/aidialog_background"
+        android:gravity="center"
+        android:textSize="24sp"
+   />
+
+    <com.ggfood.test.ggfood_api.tool.WebImageView
+        android:id="@+id/recommend_imageView"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:paddingBottom="8dp"
+        android:scaleType="fitXY" />
+</LinearLayout>
